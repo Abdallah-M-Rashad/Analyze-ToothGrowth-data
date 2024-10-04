@@ -31,3 +31,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 - The dataset used in this analysis comes from the R datasets package.
 - Thanks to [Johns Hopkins University](https://www.coursera.org) for providing resources that aided in this analysis.
+
+## Full Report
+To download the report in PDF format, you can visit [the report here](https://github.com/Abdallah-M-Rashad/Analyze-ToothGrowth-data/blob/main/Analyze_ToothGrowth_data.pdf)
