@@ -34,4 +34,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Full Report
 
-To download the report in PDF format, you can visit [[the report here](link-to-your-pdf-report.pdf](https://github.com/Abdallah-M-Rashad/Analyze-ToothGrowth-data/blob/main/Analyze_ToothGrowth_data.pdf)).
+To download the report in PDF format, you can visit [the report here](https://github.com/Abdallah-M-Rashad/Analyze-ToothGrowth-data/blob/main/Analyze_ToothGrowth_data.pdf)
