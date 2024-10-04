@@ -1,0 +1,129 @@
+---
+title: "Analyze the ToothGrowth data in the R datasets package"
+author: "ِAbdallah Mohammed"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+---
+
+# summary of the data:
+
+The response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as VC).
+
+## Form:   
+**`A data frame with 60 observations on 3 variables.`**  
+1. len -> numeric	Tooth length  
+2. supp -> factor	Supplement type (VC or OJ).  
+3. dose -> numeric	Dose in milligrams/day  
+
+## Source:
+C. I. Bliss (1952). The Statistics of Bioassay. Academic Press.
+
+## References: 
+* McNeil, D. R. (1977). Interactive Data Analysis. New York: Wiley.
+
+* Crampton, E. W. (1947). The growth of the odontoblast of the incisor teeth as a criterion of vitamin C intake of the guinea pig. The Journal of Nutrition, 33(5), 491–504. doi:10.1093/jn/33.5.491.
+
+
+# Basic Exploratory Data Analysis:
+
+```{r, echo=TRUE, message=FALSE}
+# Load the dataset
+library(dplyr)
+data("ToothGrowth")
+
+# Convert dose to factor
+ToothGrowth$dose <- factor(ToothGrowth$dose)
+
+# Basic structure and summary of the data
+str(ToothGrowth)
+summary(ToothGrowth)
+
+# Plotting the relationship between length and the two factors (supp and dose)
+par(mfrow=c(1,2))
+with(ToothGrowth, plot(len ~ supp, main = "Tooth Length by Supplement", 
+                       ylab = "Tooth Length", xlab = "Supplement Type"))
+with(ToothGrowth, plot(len ~ dose, main = "Tooth Length by Dose", 
+                       ylab = "Tooth Length", xlab = "Dose"))
+```
+
+
+# Hypotheses
+## Comparison of Supplement Type (VC vs OJ):
+* Null Hypothesis (H0): There is no difference in tooth length between the VC supplement and orange juice (OJ).
+* Alternative Hypothesis (H1): There is a difference in tooth length between the VC supplement and orange juice (OJ).
+
+## Comparison of Doses:
+* Null Hypothesis (H0): There is no difference in tooth length among the different doses of Vitamin C (0.5, 1, and 2 mg/day).
+* Alternative Hypothesis (H1): There is a difference in tooth length among the different doses of Vitamin C
+
+# Hypothesis Tests and Confidence Intervals:
+
+In this section, we will use t-tests to compare the tooth length by supplement type (supp) and by dose (dose). The t-tests will help us determine if there are statistically significant differences between groups.
+
+
+## Comparison by Supplement (VC vs OJ):
+```{r}
+# T-test to compare tooth length by supplement
+p_value_supp <- with(ToothGrowth, t.test(len ~ supp, alternative = "greater"))$p.value
+p_value_supp
+```
+p-value: `r round(p_value_supp, 4)`
+
+## Comparison by Dose:
+
+For the dose comparison, we'll perform pairwise t-tests between the three dose levels (0.5, 1, and 2 mg/day) to see if higher doses result in more tooth growth.
+
+```{r}
+# Pairwise t-tests for dose levels
+p_value_dose_1_0.5 <- t.test(len ~ dose, data = ToothGrowth %>% filter(dose %in% c(0.5, 1)), 
+                             alternative = "less")$p.value
+p_value_dose_2_0.5 <- t.test(len ~ dose, data = ToothGrowth %>% filter(dose %in% c(0.5, 2)), 
+                             alternative = "less")$p.value
+p_value_dose_2_1 <- t.test(len ~ dose, data = ToothGrowth %>% filter(dose %in% c(1, 2)), 
+                           alternative = "less")$p.value
+
+p_value_dose_1_0.5
+p_value_dose_2_0.5
+p_value_dose_2_1
+```
+
+p-values:
+
+* p-value for dose 1 vs 0.5: r round(p_value_dose_1_0.5, 4)
+* p-value for dose 2 vs 0.5: r round(p_value_dose_2_0.5, 4)
+* p-value for dose 2 vs 1: r round(p_value_dose_2_1, 4)
+
+
+# Conclusions and Assumptions:
+
+
+## Conclusions:
+### Comparison of Supplement Type (VC vs OJ):
+
+* p-value: 0.0303
+* Conclusion: Since the p-value is less than 0.05, we reject the null hypothesis (which states that there is no difference). Therefore, we conclude that there is a statistically significant difference in tooth length between the VC supplement and orange juice (OJ). This indicates that the VC supplement has a greater effect on tooth growth compared to orange juice.
+
+### Comparison of Doses:
+
+#### Dose 1 vs Dose 0.5:
+* p-value: 6.34e-08
+* Conclusion: The p-value is much lower than 0.05, indicating a statistically significant difference between the two doses. We conclude that Dose 1 leads to a statistically significant increase in tooth length compared to Dose 0.5.
+
+#### Dose 2 vs Dose 0.5:
+* p-value: 2.20e-14
+* Conclusion: The p-value suggests a strong significant difference between the two doses. We conclude that Dose 2 results in a substantial statistically significant increase in tooth length compared to Dose 0.5.
+
+#### Dose 2 vs Dose 1:
+* p-value: 9.53e-06
+* Conclusion: Again, the p-value is less than 0.05, indicating a statistically significant difference between the two doses. We conclude that Dose 2 leads to a statistically significant increase in tooth length compared to Dose 1.
+
+### Summary:
+The results indicate that the use of Vitamin C (either from the VC supplement or orange juice) and higher doses of it positively affect tooth growth in guinea pigs. Overall, we can say that higher doses of Vitamin C significantly enhance tooth growth
+
+## Assumptions:
+
+* The t-test assumes that the data follows a normal distribution.
+* Variances between groups are assumed to be equal (in the case of unpaired t-tests).
+* Independence of observations is assumed.
